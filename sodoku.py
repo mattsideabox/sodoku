@@ -1,4 +1,4 @@
-from constraint import Problem, AllDifferentConstraint
+from constraint import Problem, AllDifferentConstraint, InSetConstraint
 
 
 def parse_sodoku(file_name: str):
@@ -60,9 +60,19 @@ def constrain_sodoku_start(problem: Problem, sodoku: list[int]):
             problem.addConstraint(lambda x, y=sodoku[i]: x == y, [i])
 
 
-def constraint_diagonal(problem: Problem):
+def constrain_diagonal(problem: Problem):
     problem.addConstraint(AllDifferentConstraint(), [i * 9 + i for i in range(9)])
     problem.addConstraint(AllDifferentConstraint(), [i * 9 + 8 - i for i in range(9)])
+
+
+def constrain_odd_even(problem: Problem):
+    clues = [[20, 19, 11], [42, 25, 15], [56, 55, 65], [60, 61, 69]]
+
+    for clue in clues:
+        if clue[0] % 2 == 0:
+            problem.addConstraint(InSetConstraint([2, 4, 6, 8]), clue[1:])
+        else:
+            problem.addConstraint(InSetConstraint([1, 3, 5, 7, 9]), clue[1:])
 
 
 def solve_problem(problem: Problem):
@@ -80,9 +90,9 @@ def main(filename: str):
     print_sodoku(sodoku_start)
     sodoku_problem = build_sodoku_problem()
     constrain_sodoku_start(sodoku_problem, sodoku_start)
-    constraint_diagonal(sodoku_problem)
+    constrain_odd_even(sodoku_problem)
     solve_problem(sodoku_problem)
 
 
 if __name__ == '__main__':
-    main('test_data/diagonal.txt')
+    main('test_data/even_odd.txt')
