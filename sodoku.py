@@ -1,7 +1,7 @@
 from constraint import Problem, AllDifferentConstraint
 
 
-def parse_sodoku(file_name):
+def parse_sodoku(file_name: str):
     """
     Example input
     7....98..
@@ -29,7 +29,7 @@ def parse_sodoku(file_name):
     return sodoku
 
 
-def print_sodoku(sodoku):
+def print_sodoku(sodoku: list[int]):
     for i in range(9):
         for j in range(9):
             value = sodoku[i * 9 + j]
@@ -54,13 +54,18 @@ def build_sodoku_problem():
     return problem
 
 
-def constrain_sodoku_start(problem, sodoku):
+def constrain_sodoku_start(problem: Problem, sodoku: list[int]):
     for i in range(81):
         if sodoku[i] != 0:
             problem.addConstraint(lambda x, y=sodoku[i]: x == y, [i])
 
 
-def solve_problem(problem):
+def constraint_diagonal(problem: Problem):
+    problem.addConstraint(AllDifferentConstraint(), [i * 9 + i for i in range(9)])
+    problem.addConstraint(AllDifferentConstraint(), [i * 9 + 8 - i for i in range(9)])
+
+
+def solve_problem(problem: Problem):
     """Solve a sodoku problem."""
     solution = problem.getSolution()
     if solution is None:
@@ -70,13 +75,14 @@ def solve_problem(problem):
         print_sodoku(solution)
 
 
-def main(filename):
+def main(filename: str):
     sodoku_start = parse_sodoku(filename)
     print_sodoku(sodoku_start)
     sodoku_problem = build_sodoku_problem()
     constrain_sodoku_start(sodoku_problem, sodoku_start)
+    constraint_diagonal(sodoku_problem)
     solve_problem(sodoku_problem)
 
 
 if __name__ == '__main__':
-    main('test.txt')
+    main('test_data/diagonal.txt')
