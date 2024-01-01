@@ -90,7 +90,6 @@ def main(filename: str):
     print_sodoku(sodoku_start)
     sodoku_problem = build_sodoku_problem()
     constrain_sodoku_start(sodoku_problem, sodoku_start)
-    constrain_odd_even(sodoku_problem)
     solve_problem(sodoku_problem)
 
 
